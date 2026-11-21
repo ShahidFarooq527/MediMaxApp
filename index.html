@@ -1,311 +1,296 @@
 <!DOCTYPE html>
-<html lang="ur">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MediMax User Panel</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediMax User Panel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="main-header">
- <button class="menu-toggle" onclick="toggleMenu()">☰ Menu</button>
-
- <div class="header-title">
-  <b style="display:flex;align-items:center;gap:10px;font-size:23px">
-   <img src="medimax-logo.jpg" alt="MediMax Logo"
-    style="width:35px;height:25px;object-fit:contain;">
-   MediMax
-  </b>
-  <div>Complete Medical Solutions</div>
- </div>
-
- <div class="toolbar no-print">
-  <button onclick="printCurrent()">🖨 Print</button>
-  <button onclick="backupTxt()">📄 TXT Backup</button>
-  <button class="danger" onclick="logout()">Logout</button>
- </div>
+  <button onclick="toggleMenu()">☰</button>
+  <div class="brand">
+    <img src="medimax-logo.jpg" alt="MediMax Logo">
+    <div>
+      <h2>MediMax</h2>
+      <p>Complete Medical Solutions</p>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button onclick="printCurrent()">Print</button>
+    <button onclick="backupTXT()">TXT Backup</button>
+    <button onclick="logout()">Logout</button>
+  </div>
 </header>
 
 <section id="auth" class="card">
- <h2 id="authTitle">ClinicPro Login</h2>
+  <h2 id="authTitle">MediMax Login</h2>
+  <form id="authForm">
+    <label>Email</label>
+    <input id="email" type="email" required>
 
- <form id="authForm">
-  <label>Email</label>
-  <input id="email" type="email" required maxlength="150" autocomplete="username">
+    <label>Password</label>
+    <input id="password" type="password" required>
 
-  <label>Password</label>
-  <div class="password-wrap">
-   <input id="password" type="password" required maxlength="100" autocomplete="current-password">
-   <button type="button" onclick="toggleEye('password',this)">👁</button>
-  </div>
+    <div id="registerFields" class="hidden">
+      <label>Confirm Password</label>
+      <input id="confirmPassword" type="password">
 
-  <div id="registerFields" class="hidden">
-   <label>Confirm Password</label>
-   <div class="password-wrap">
-    <input id="confirmPassword" type="password" autocomplete="new-password">
-    <button type="button" onclick="toggleEye('confirmPassword',this)">👁</button>
-   </div>
+      <label>Profile Name</label>
+<input id="clinicName">
 
-   <label>Clinic Name</label>
-   <input id="clinicName" maxlength="100">
+      <label>Owner Name</label>
+      <input id="ownerName">
 
-   <label>Owner Name</label>
-   <input id="ownerName" maxlength="100">
+      <label>Phone</label>
+      <input id="phone">
+    </div>
 
-   <label>Phone</label>
-   <input id="phone" maxlength="30">
-  </div>
-
-  <div class="toolbar">
-   <button id="submitAuth" type="submit">Login</button>
-   <button type="button" class="secondary" onclick="toggleRegister()">Register / Back</button>
-   <button type="button" class="secondary" onclick="resetPassword()">Forgot Password?</button>
-  </div>
- </form>
-
- <p id="authMsg" class="status" role="status"></p>
-
- <div class="notice">
-  <b>Important:</b> Naya account banane ke liye Register par click karein.
-  Apna email aur password mehfooz rakhein.
-  Demo account ko haqeeqi medical records ke liye use na karein.
- </div>
+    <button id="submitAuth" type="submit">Login</button>
+    <button type="button" onclick="toggleRegister()">Register / Back</button>
+    <button type="button" onclick="forgotPassword()">Forgot Password</button>
+  </form>
+  <p id="authMessage"></p>
 </section>
 
-<div id="app" class="hidden">
-<main class="layout">
+<section id="app" class="hidden">
+  <div class="layout">
 
-<aside id="sidebar" class="sidebar">
- <h3>ClinicPro Menu</h3>
+    <aside id="sidebar" class="sidebar">
+      <button onclick="showPage('dashboardPage')">Dashboard</button>
+      <div id="sectionMenu"></div>
+      
+      <button onclick="showPage('packagesPage')">Packages</button>
+      <button onclick="showPage('reportsPage')">Reports</button>
+      <button onclick="showPage('profilePage')">Profile</button>
+    </aside>
 
- <button class="active" onclick="go('dashboard',this)">🏠 Dashboard</button>
- <div id="sectionMenu"></div>
+    <main>
 
- <hr>
+      <section id="dashboardPage" class="page">
+        <h2>Dashboard</h2>
+        <div class="grid">
+          <div class="card">Profile: <b id="dashClinic"></b></div>
+          <div class="card">Records: <b id="dashRecords">0</b></div>
+          <div class="card">Package: <b id="dashPackage">None</b></div>
+          <div class="card">Expiry: <b id="dashExpiry">-</b></div>
+        </div>
+        <h3>Package Usage</h3>
+        <div id="dashboardUsage"></div>
+      </section>
 
- <button onclick="go('apkDownload',this)">📱 APK Download</button>
- <button onclick="go('packages',this)">💳 Packages</button>
- <button onclick="go('reports',this)">📊 Reports</button>
- <button onclick="go('profile',this)">👤 Clinic Profile</button>
- <button onclick="backupTxt()">📄 TXT Backup</button>
- <button onclick="document.getElementById('restoreFile').click()">♻ TXT Restore</button>
- <button onclick="logout()">Logout</button>
-</aside>
+      <section id="recordsPage" class="page hidden">
+        <div id="readRecordContent" class="hidden">
+  <h3>Record Details</h3>
 
-<div class="content">
+  <div id="readRecordDetails"></div>
 
-<section id="dashboard" class="page active">
- <h2>Dashboard</h2>
-
- <div class="grid">
-  <div class="card">Clinic<div class="stat" id="dClinic">—</div></div>
-  <div class="card">Records<div class="stat" id="dRecords">0</div></div>
-  <div class="card">Package<div class="stat" id="dPlan">None</div></div>
-  <div class="card">Expiry<div class="stat" id="dExpiry">—</div></div>
-  <div class="card">Sections Used<div class="stat" id="dSections">0</div></div>
- </div>
-
- <div class="card">
-  <h3>Character Usage</h3>
-  <p id="usageText">0 / 0 characters</p>
-  <div class="progress"><div id="usageBar"></div></div>
-  <button onclick="go('packages')">View Packages</button>
- </div>
-
- <div class="card">
-  <h3>Print Usage</h3>
-  <p id="printUsageText">0 prints</p>
-  <div class="progress"><div id="printUsageBar"></div></div>
- </div>
-
- <div class="card">
-  <h3>Latest Package Request</h3>
-  <div id="latestRequest">No request yet.</div>
- </div>
-</section>
-
-<section id="records" class="page">
- <h2 id="sectionHeading">Section Records</h2>
-
- <div class="card">
-  <div class="notice">
-   Har section mein 10 fixed fields, custom spreadsheet columns aur Note field hain.
-   Aap aik record mein jitni zaroorat ho rows add kar sakte hain.
-   Tamam rows aik hi Save Record button se save hongi.
-  </div>
-
-  <div class="formgrid">
-   <div>
-    <label>Section</label>
-    <select id="recordSection" onchange="sectionChanged()"></select>
-   </div>
-
-   <div>
-    <label>Record Title / ID</label>
-    <input id="recordTitle" maxlength="150">
-   </div>
-
-   <div>
-    <label>Date</label>
-    <input id="recordDate" type="date">
-   </div>
-  </div>
-
-  <div id="fieldEditorTop" class="formgrid"></div>
-
-  <h3>Custom Fields — Spreadsheet</h3>
-
-  <div class="custom-sheet-toolbar no-print">
-   <button type="button" onclick="addCustomRow()">＋ Add Row</button>
-   <button type="button" onclick="addCustomColumn()">＋ Add Column</button>
-   <button type="button" class="danger" onclick="deleteCustomColumn()">－ Delete Column</button>
-  </div>
-
-  <p class="sheet-help">
-   Pehli row mein field names likhein. A, B, C ... Z, AA, AB ... columns hain.
-   Green rows mein record ka data enter karein. Har row ke samne Delete Row ka button hai.
-   Mobile par table ko left/right scroll karein.
-  </p>
-
-  <div class="custom-sheet-wrap" id="customSheetWrap">
-   <table class="custom-sheet" id="customSheet">
-    <thead id="customSheetHead"></thead>
-    <tbody id="customSheetBody"></tbody>
-   </table>
-  </div>
-
-  <div class="formgrid">
-   <div>
-    <label>Note</label>
-    <textarea id="recordNote" maxlength="5000"></textarea>
-   </div>
-
-   <div>
-    <label>Record Details / Summary</label>
-    <textarea id="recordDetails" maxlength="10000"></textarea>
-   </div>
-  </div>
-
-  <div class="toolbar no-print">
-   <button onclick="saveRecord()">💾 Save Record</button>
-   <button class="secondary" onclick="clearForm()">Clear Form</button>
-   <button class="secondary" onclick="printSection('records')">Print Section</button>
-  </div>
-
-  <p id="recordMsg" class="status" role="status"></p>
- </div>
-
- <div class="card">
-  <h3>Saved Records</h3>
-  <input id="search" class="no-print" placeholder="Search..." oninput="renderRecords()">
-
-  <div class="tablewrap">
-   <table>
-    <thead>
-     <tr>
-      <th>Section</th>
-      <th>Title / Details</th>
-      <th>Date</th>
-      <th class="no-print">Actions</th>
-     </tr>
-    </thead>
-    <tbody id="recordRows"></tbody>
-   </table>
-  </div>
- </div>
-</section>
-
-<section id="apkDownload" class="page">
- <h2>📱 APK Download</h2>
- <div class="card">
-  <h3>MediMax Android Application</h3>
-  <p>Download our Android application and use MediMax on your mobile phone.</p>
-  <div class="notice">
-   <b>Important:</b> Download the APK file using the button below.
-  </div>
-  <a href="https://github.com/ShahidFarooq527/MediMax/releases/download/v1.0.0/medimax.apk"
-   target="_blank" rel="noopener" download style="text-decoration:none;">
-   <button type="button" class="green">📥 Download APK</button>
-  </a>
- </div>
-</section>
-
-<section id="packages" class="page">
- <h2>Packages & Subscription</h2>
-
- <div class="grid card">
-  <div>Current Plan<div class="stat" id="pName">None</div></div>
-  <div>Status<div id="pStatus">No active plan</div></div>
-  <div>Start Date<div id="pStart">—</div></div>
-  <div>End Date<div id="pEnd">—</div></div>
- </div>
-
- <div id="packageCards" class="grid"></div>
-
- <div class="card">
-  <h3>My Requests</h3>
-  <div id="myRequests"></div>
- </div>
-
- <div class="card">
-  <h3>Message / Appeal</h3>
-  <label>Request</label>
-  <select id="messageRequest" onchange="renderMessages()"></select>
-  <label>Message</label>
-  <textarea id="messageText" maxlength="2000"></textarea>
-  <button onclick="sendMessage()">Send Message</button>
-  <h3>Conversation</h3>
-  <div id="conversation"></div>
- </div>
-</section>
-
-<section id="reports" class="page">
- <h2>Usage Reports</h2>
- <div class="card">
-  <div class="tablewrap">
-   <table>
-    <thead><tr><th>Section</th><th>Records</th></tr></thead>
-    <tbody id="reportRows"></tbody>
-   </table>
-  </div>
-  <div class="toolbar no-print">
-   <button onclick="backupTxt()">TXT Backup</button>
-   <button onclick="printSection('reports')">Print Report</button>
-  </div>
-  <label class="no-print">Restore ClinicPro TXT Backup</label>
-  <input id="restoreFile" class="no-print" type="file" accept=".txt,text/plain" onchange="restoreTxt(this)">
- </div>
-</section>
-
-<section id="profile" class="page">
- <h2>Clinic Profile</h2>
- <div class="card">
-  <label>Clinic Name</label>
-  <input id="profileClinic" maxlength="100">
-  <label>Owner Name</label>
-  <input id="profileOwner" maxlength="100">
-  <label>Phone</label>
-  <input id="profilePhone" maxlength="30">
-  <button onclick="saveProfile()">Save Profile</button>
-  <p id="profileMsg" class="status"></p>
- </div>
- <div class="card">
-  <h3>Account</h3>
-  <div id="accountInfo"></div>
- </div>
-</section>
-
+  <button type="button" onclick="closeReadRecord()">
+    Back to Records
+  </button>
 </div>
-</main>
+        <h2 id="recordsHeading">Patients Records</h2>
+
+        <label>Section</label>
+        <select id="recordSection"></select>
+
+        <label>Record Title</label>
+        <input id="recordTitle">
+
+        <label>Date</label>
+        <input id="recordDate" type="date">
+
+        <h3>Fixed Fields</h3>
+        <div id="fixedFieldsContainer" class="grid"></div>
+
+        <h3>Custom Spreadsheet</h3>
+        <div class="table-wrap">
+          <table>
+            <thead id="customTableHead"></thead>
+            <tbody id="customTableBody"></tbody>
+          </table>
+        </div>
+
+     <div class="toolbar">
+  <button onclick="addCustomRow()">Add Row</button>
+  <button onclick="addCustomColumn()">Add Column</button>
 </div>
 
-<footer>ClinicPro</footer>
-<div id="printArea"></div>
+        <label>Note</label>
+        <textarea id="recordNote"></textarea>
 
+        <label>Details</label>
+        <textarea id="recordDetails"></textarea>
+
+        <button id="saveRecordBtn" type="button" onclick="saveRecord()">
+  Save Record
+</button>
+        <button onclick="clearRecordForm()">Clear</button>
+
+        <p id="recordMessage"></p>
+
+        <h3>Search Records</h3>
+        <input id="search" placeholder="Search records...">
+        <div class="table-wrap">
+          <table>
+         <thead>
+  <tr>
+    <th>Section</th>
+    <th>Record Title</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Search Result</th>
+    <th>Action</th>
+  </tr>
+</thead>
+            <tbody id="recordsContainer"></tbody>
+          </table>
+        </div>
+      </section>
+
+      
+
+      <section id="packagesPage" class="page hidden">
+        <h2>Packages</h2>
+        <div id="packageCards" class="grid"></div>
+        <h3>My Requests</h3>
+        <div id="myRequests"></div>
+
+        <h3>Support Messages</h3>
+        <select id="messageRequest"></select>
+        <div id="messageConversation"></div>
+        <textarea id="messageText"></textarea>
+        <button onclick="sendMessage()">Send Message</button>
+      </section>
+
+      <section id="reportsPage" class="page hidden">
+        <h2>Reports</h2>
+        <div id="requestUsageReport"></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Section</th>
+              <th>Records</th>
+              <th>Characters</th>
+            </tr>
+          </thead>
+          <tbody id="reportTableBody"></tbody>
+        </table>
+        <input type="file" id="restoreFile" accept=".txt,.json">
+
+<button
+  type="button"
+  onclick="restoreTXT()"
+  id="restoreButton">
+  Restore Backup
+</button>
+
+<p
+  id="restoreProgress"
+  style="
+    margin-top:10px;
+    font-weight:bold;
+    color:#159c91;
+    overflow-wrap:anywhere;
+  ">
+</p>
+      </section>
+
+      <section id="profilePage" class="page hidden">
+        <h2>Profile</h2>
+        <form id="profileForm">
+          <label>Profile Name</label>
+<input id="profileClinic">
+          <label>Owner</label>
+          <input id="profileOwner">
+          <label>Phone</label>
+          <input id="profilePhone">
+          <button type="submit">Save Profile</button>
+        </form>
+        <p id="profileMessage"></p>
+        <div id="accountInfo"></div>
+      </section>
+
+    </main>
+  </div>
+</section>
+
+<div id="printArea" class="hidden"></div>
+<!-- Package Payment Popup -->
+<div id="packagePaymentPopup" class="hidden">
+  <div class="package-payment-box">
+
+    <button type="button" class="payment-close"
+      onclick="closePackagePayment()">×</button>
+
+    <h3>Package Payment</h3>
+
+    <p>Account Holder Name</p>
+    <h4 id="paymentAccountName">SHAHID FAROOQ</h4>
+
+    <hr>
+
+    <p id="paymentPackageName">Package Name</p>
+    <h2 id="paymentPackagePrice">Rs. 0</h2>
+
+    <hr>
+
+    <p>Account
+    <br>
+    <br>
+    EasyPaisa IBAN
+    </p>
+
+   
+<div class="payment-copy-row">
+  <strong id="EasyPaisaNumber">PK45TMFB0000000064551766</strong>
+
+  <button type="button" id="copyEasyPaisaBtn"
+    onclick="copyEasyPaisaNumber()">
+    <span>📋</span>
+    <small>Copy</small>
+  </button>
+</div>
+
+<hr>
+
+<label for="paymentSenderName">Payment Sender Name</label>
+<input
+  type="text"
+  id="paymentSenderName"
+  placeholder="Enter your payment name"
+  required
+>
+
+<label for="paymentTransactionId">Transaction ID (TRX ID)</label>
+<input
+  type="text"
+  id="paymentTransactionId"
+  placeholder="Enter your transaction ID"
+  required
+>
+
+
+
+
+    <button
+      type="button"
+      id="submitPackageRequestBtn"
+      onclick="confirmPackageRequest()">
+      Main Submit Package
+    </button>
+
+  </div>
+</div>
+
+<div id="copyToast" class="copy-toast">
+  Copied!
+</div>
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
+
 </body>
 </html>
