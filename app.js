@@ -745,12 +745,14 @@ function createSectionMenu() {
 
     menu.appendChild(button);
   });
+
+
 }
 
 function populateSectionSelect() {
   $("recordSection").innerHTML = "";
 
-  SECTIONS.forEach(section => {
+  SECTIONS.filter(section => section !== "Restore").forEach(section => {
     const option = document.createElement("option");
 
     option.value = section;
